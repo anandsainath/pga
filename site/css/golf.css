@@ -1,0 +1,80 @@
+/* 
+    Created on : Feb 28, 2014, 2:57:42 PM
+    Author     : anandsainath
+*/
+
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+        url('/images/loading.gif') 
+        50% 50% 
+        no-repeat;
+}
+
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.menu-item{
+    opacity: 0.2;
+}
+
+.clicked{
+    opacity: 1 !important;
+}
+
+.page-header {
+    border-bottom: 1px solid #EEEEEE;
+    margin: 10px 0 10px !important;
+    padding-bottom: 0px !important;
+}
+
+.toggle-button {
+    margin: 30px 0 0 20px;
+}
+
+hr{
+    margin-bottom: 10px !important;
+    margin-top: 10px !important;
+}
+
+.fade-round {
+    opacity: 0.1;
+    transition: opacity 0.1s ease 0s;
+}
+
+.round-details, .hole-details {
+    opacity: 1;
+    transition: opacity 0.5s ease 0.2s;
+    cursor: default;
+    font-family: "Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+    font-weight: bold;
+    z-index: 999;
+}
+
+.round-details .round-label, .hole-details .round-label {
+    font-size: 9px;
+    font-weight: normal;
+}
+
+.bracket {
+    font-weight: normal;
+    color: #111111;
+    font-size: 68px;
+}
+
+.hover, .key-text{
+    pointer-events:none;
+}
+
+.customUl{
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+}

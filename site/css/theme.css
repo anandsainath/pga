@@ -1,0 +1,83 @@
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('/images/loading.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+/* Styles for the typograhical representation */
+.scoreText{
+    font-family: serif;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: lighter;
+    text-anchor: start;
+    font-size: 72px;
+}
+
+.birdie{
+    fill: #FFA500;
+}
+
+.eagle{
+    fill: #FF8C00;
+    stroke: #FFFF00;
+}
+
+.bogey{
+    fill: #A0522D;
+}
+
+.doubleBogey{
+    fill: #A52A2A;
+    stroke: #FF0000;
+}
+
+.par{
+    fill: #00BFFF;
+}
+
+.puttText{
+    fill: #006400;
+    font-family: serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.fir{
+    fill: #32CD32;
+}
+
+.gir{
+    fill: #006400;
+}
+
+.note{
+    font-family: serif;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.sandSave{
+    fill: #F4A460;
+}
+
+.greenSideBunker{
+    fill: #A52A2A;
+}
+
+.count{
+    fill: #C0C0C0;
+}
+
+.roughIndicator{
+    fill: #006400;
+}

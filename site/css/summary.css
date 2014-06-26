@@ -1,0 +1,73 @@
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+        url('/images/loading.gif') 
+        50% 50% 
+        no-repeat;
+}
+
+.color-box{
+    display: block;
+    float: left;
+    height: 12px;
+    margin-right: 5px;
+    margin-top: 4px;
+    width: 12px;
+}
+
+.round-details, .hole-details {
+    opacity: 1;
+    transition: opacity 0.5s ease 0.2s;
+    cursor: default;
+    font-family: "Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+    font-weight: bold;
+    display: none;
+    z-index: 999;
+}
+
+.fade-round {
+    opacity: 0.1;
+    transition: opacity 0.1s ease 0s;
+}
+
+.hover-round {
+    opacity: 1.0;
+}
+
+.hover-details{
+    opacity: 1.0;
+    transition: opacity 0.1s ease 0s;
+}
+
+.bracket {
+    font-weight: normal;
+    //opacity: 0;
+    color: #111111;
+    font-size: 68px;
+}
+
+.score {
+    color: #111111;
+    font-size: 14px;
+}
+
+.round-details .label, .hole-details .label {
+    font-size: 9px;
+    font-weight: normal;
+}
+
+.key{
+    position: absolute; 
+    left: 1100px; 
+    top: 150px;
+}
+
+.hover{
+    pointer-events:none;
+}
