@@ -21,4 +21,10 @@ class SiteController extends Controller {
         $this->pageTitle = "Tournament Visualization";
         $this->render('original');
     }
+    
+    public function actionHome(){
+        $this->layout = 'fluid';
+        $this->pageTitle = "Shotlink Visualization";
+        $this->render("home");
+    }
 }

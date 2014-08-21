@@ -41,7 +41,8 @@ return array(
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
                 'get-data/<id_player:\d+>' => '/API/GetData',
                 'get-players' => '/API/GetPlayers',
-                'original' => '/Site/Original'
+                'original' => '/Site/Original',
+                'home' => '/Site/Home'
             ),
         ),
         // uncomment the following to use a MySQL database

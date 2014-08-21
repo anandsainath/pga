@@ -196,7 +196,7 @@
                         .text(function(datum) {
                             return datum;
                         })
-                        .attr("x", "156")
+                        .attr("x", "0")
                         .attr("y", "15")
                         .attr("class", "roundLables")
                         .attr("text-anchor", "middle")
@@ -229,7 +229,6 @@
                         .attr("transform", function(datum, index) {
                             var x = (index * opts.dimension.roundWidth) + ((index + 1) * opts.dimension.roundPadding) + 180;
                             x += (opts.dimension.roundWidth / 2);
-                            x += 156;
                             return "translate(" + x + ",0)";
                         })
                         .attr("preserveAspectRatio", "xMidYMid meet")
@@ -277,7 +276,7 @@
                         })
                         .attr("y", "15")
                         .attr("font-size", "10px")
-                        .attr("transform", "translate(880, 0)")
+                        .attr("transform", "translate(724, 0)")
                         .on("click", function(datum) {
                             var _this = d3.select(this);
                             privateMethods.sort(_this, datum.name, datum.attributeName);
@@ -288,7 +287,7 @@
                         .attr("class", "columnSortArrow")
                         .attr("preserveAspectRatio", "xMidYMid meet")
                         .attr("xlink:href", "/images/sort_neutral.png")
-                        .attr("transform", "translate(880, 0)")
+                        .attr("transform", "translate(724, 0)")
                         .attr("x", function(datum, index) {
                             var xpos = ((index + 1) * 50) - 10;
                             if (index === 1) {
@@ -308,7 +307,7 @@
                         .attr("text-anchor", "end")
                         .attr("style", "fill: #000000;")
                         .attr("font-size", "10px")
-                        .attr("x", 315)
+                        .attr("x", 159)
                         .attr("y", 15)
                         .on("click", function(datum) {
                             var _this = d3.select(this);
@@ -319,7 +318,7 @@
                         .attr("class", "columnSortArrow")
                         .attr("preserveAspectRatio", "xMidYMid meet")
                         .attr("xlink:href", "/images/sort_down.png")
-                        .attr("x", 320)
+                        .attr("x", 164)
                         .attr("y", 7)
                         .attr("width", "7")
                         .attr("height", "10");
@@ -362,7 +361,7 @@
                         })
                         .duration(1000)
                         .attr("transform", function(datum, index) {
-                            return "translate(156," + (15 + (23 * index)) + ")";
+                            return "translate(0," + (15 + (23 * index)) + ")";
                         });
                 opts.data.sort(sortItemsOnRoundScore);
                 svg.selectAll('.sortArrow').each(function() {
@@ -420,7 +419,7 @@
                         })
                         .duration(opts.sortDuration)
                         .attr("transform", function(datum, index) {
-                            return "translate(156," + (15 + (23 * index)) + ")";
+                            return "translate(0," + (15 + (23 * index)) + ")";
                         });
                 opts.data.sort(sortItemsOnAttribute);
                 svg.selectAll('.columnSortArrow').each(function() {
@@ -494,11 +493,30 @@
             },
             drawViz: function() {
                 opts.scoreOverAllKeyData = [];
+                opts.scoreHoleByHoleKeyData = [];
+                opts.fwy2OverallKeyData = [];
+                opts.fwy2HoleByHoleKeyData = [0, 0];
+                opts.girOverallKeyData = [];
+                opts.girHoleByHoleKeyData = [0, 0];
+                opts.fwy3HoleByHoleKeyData = {left: 0, right: 0, hit: 0, unknown: 0};
+                opts.puttOverAllKeyData = [];
+                opts.puttHoleByHoleKeyData = [0, 0, 0, 0, 0];
                 opts.totalRounds = 0;
                 opts.totalHoles = 0;
 
+                for (var i = 22; i <= 36; i++) {
+                    opts.puttOverAllKeyData[i] = 0;
+                }
+
+                for (var i = 7; i <= 18; i++) {
+                    opts.girOverallKeyData[i] = 0;
+                }
+
                 for (var i = -8; i <= 8; i++) {
                     opts.scoreOverAllKeyData[i] = 0;
+                    opts.scoreHoleByHoleKeyData[i] = 0;
+                    opts.fwy2OverallKeyData[i + 8] = 0;
+                    opts.fwy2OverallKeyData[i + 16] = 0;
                 }
 
                 var svg = opts.svg;
@@ -507,7 +525,7 @@
                         .append("g")
                         .attr("class", "tournaments")
                         .attr("transform", function(datum, index) {
-                            return "translate(156," + ((index * opts.dimension.nextTournamentLocation) + opts.dimension.topMargin) + ")";
+                            return "translate(0," + ((index * opts.dimension.nextTournamentLocation) + opts.dimension.topMargin) + ")";
                         })
                         .each(function(tournamentData, tournamentIndex) {
                             var tournament = d3.select(this);
@@ -540,6 +558,8 @@
                                             case mode.score.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum) {
                                                     var diff = datum.score - datum.par;
+                                                    opts.scoreHoleByHoleKeyData[diff] = opts.scoreHoleByHoleKeyData[diff] + 1;
+                                                    opts.totalHoles = opts.totalHoles + 1;
                                                     var color = (diff === 0) ? opts.color.parColorSwatch : ((diff < 0) ? privateMethods.birdieColor(diff) : privateMethods.bogeyColor(diff));
                                                     return "fill:" + color + "; vector-effect: non-scaling-stroke;";
                                                 });
@@ -547,24 +567,32 @@
                                             case mode.fwy.twoColor.overall:
                                                 privateMethods.drawSummary(round, [arguments[0].roundSummary], function(datum) {
                                                     var color = privateMethods.getFwyTwoColorSummaryColor(datum.fir);
+                                                    opts.fwy2OverallKeyData[datum.fir] += 1;
+                                                    opts.totalRounds = opts.totalRounds + 1;
                                                     return "fill:" + color + "; stroke: #c0c0c0; stroke-width: 0.25px; vector-effect: non-scaling-stroke;";
                                                 });
                                                 break;
                                             case mode.fwy.twoColor.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum, index) {
                                                     var color = (datum.fir === 0) ? opts.color.parColorSwatch : privateMethods.getFwyTwoColorSummaryColor(11);
+                                                    opts.fwy2HoleByHoleKeyData[datum.fir] += 1;
+                                                    opts.totalHoles += 1;
                                                     return "fill:" + color + ";";
                                                 });
                                                 break;
                                             case mode.gir.overall:
                                                 privateMethods.drawSummary(round, [arguments[0].roundSummary], function(datum) {
                                                     var color = privateMethods.getGirSummaryColor(datum.gir);
+                                                    opts.girOverallKeyData[datum.gir] += 1;
+                                                    opts.totalRounds += 1;
                                                     return "fill:" + color + "; stroke: #c0c0c0; stroke-width: 0.25px; vector-effect: non-scaling-stroke;";
                                                 });
                                                 break;
                                             case mode.gir.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum, index) {
                                                     var color = (datum.gir === 0) ? opts.color.parColorSwatch : privateMethods.getGirSummaryColor(16);
+                                                    opts.girHoleByHoleKeyData[datum.gir] += 1;
+                                                    opts.totalHoles += 1;
                                                     return "fill:" + color + ";";
                                                 });
                                                 break;
@@ -585,12 +613,33 @@
                                                 break;
                                             case mode.fwy.threeColor.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum, index) {
-                                                    var color = (datum.fir === 0) ? ((datum.rough === "LR") ? opts.fwy3LeftOverallColorSwatch[2] : ((datum.rough === "RR") ? opts.fwy3RightOverallColorSwatch[2] : "#bcbddc")) : opts.fwy3OverallColorSwatch[14];
+                                                    var color;
+                                                    if (datum.fir === 0) {
+                                                        switch (datum.rough) {
+                                                            case "LR":
+                                                                color = opts.fwy3LeftOverallColorSwatch[2];
+                                                                opts.fwy3HoleByHoleKeyData.left += 1;
+                                                                break;
+                                                            case "RR":
+                                                                color = opts.fwy3RightOverallColorSwatch[2];
+                                                                opts.fwy3HoleByHoleKeyData.right += 1;
+                                                                break;
+                                                            default:
+                                                                color = "#bcbddc";
+                                                                opts.fwy3HoleByHoleKeyData.unknown += 1;
+                                                        }
+                                                    } else {
+                                                        color = opts.fwy3OverallColorSwatch[14];
+                                                        opts.fwy3HoleByHoleKeyData.hit += 1;
+                                                    }
+                                                    opts.totalHoles += 1;
                                                     return "fill:" + color + ";";
                                                 });
                                                 break;
                                             case mode.putt.overall:
                                                 privateMethods.drawSummary(round, [roundData.roundSummary], function(datum, index) {
+                                                    opts.totalRounds += 1;
+                                                    opts.puttOverAllKeyData[datum.putt] += 1;
                                                     var diff = datum.putt - 29;
                                                     var color = privateMethods.getPuttSummaryColor(diff);
                                                     return "fill:" + color + "; stroke: #c0c0c0; stroke-width: 0.25px; vector-effect: non-scaling-stroke;";
@@ -598,6 +647,8 @@
                                                 break;
                                             case mode.putt.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum) {
+                                                    opts.totalHoles += 1;
+                                                    opts.puttHoleByHoleKeyData[datum.putts] += 1;
                                                     var diff = datum.putts - 2;
                                                     var color = (diff === 0) ? opts.color.parColorSwatch : ((diff < 0) ? privateMethods.birdieColor(diff) : privateMethods.bogeyColor(diff));
                                                     return "fill:" + color + "; vector-effect: non-scaling-stroke;";
@@ -772,7 +823,7 @@
                 } else if (fir < 8) {
                     return opts.color.fwyNegativeColor[7 - fir];
                 } else {
-                    return opts.color.fwyPositiveColor[fir - 9];
+                    return opts.color.fwyPositiveColor[Math.min(fir - 9, 5)];
                 }
             },
             getGirSummaryColor: function(gir) {
@@ -864,6 +915,7 @@
                         }
                     });
                 });
+
                 svg.selectAll('.columnSortArrow').on("click", function(columnLabel) {
                     svg.selectAll('.columnHeader').each(function(datum) {
                         if (columnLabel.name === datum.name) {
@@ -872,6 +924,7 @@
                         }
                     });
                 });
+
                 svg.selectAll('.holeSummary, .holeSummaryL, .holeSummaryR').on("mouseover", function() {
                     if (parseInt(d3.select(this).attr('fill-opacity')) === 1) {
                         d3.select(this).attr('stroke-width', '0.25px').attr('stroke', "#000000");
@@ -879,6 +932,7 @@
                 }).on("mouseout", function() {
                     d3.select(this).attr('stroke', null);
                 });
+
                 switch (opts.mode) {
                     case mode.score.overall:
                     case mode.fwy.threeColor.overall:
@@ -1096,6 +1150,9 @@
                     case mode.fwy.twoColor.overall:
                         privateMethods.renderOverallFwyTwoColorKey(key);
                         break;
+                    case mode.fwy.threeColor.overall:
+                        privateMethods.renderOverallFwyThreeColorKey(key);
+                        break;
                     case mode.gir.overall:
                         privateMethods.renderOverallGirColorKey(key);
                         break;
@@ -1122,7 +1179,11 @@
             renderOverallPuttsKey: function(key) {
                 var _data = [];
                 for (var putts = 22; putts <= 36; putts++) {
-                    _data.push({color: privateMethods.getPuttSummaryColor(putts - 29), value: putts});
+                    _data.push({
+                        color: privateMethods.getPuttSummaryColor(putts - 29),
+                        value: putts,
+                        percentage: Math.abs(Math.floor(((opts.puttOverAllKeyData[putts] / opts.totalRounds) * 100) + 0.5))
+                    });
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1180,12 +1241,31 @@
                                     .attr("font-weight", "bold")
                                     .attr("font-size", "10px")
                                     .attr("style", "fill: #FFFFFF");
+
+                            if (_data[0].percentage !== undefined) {
+                                keyG.selectAll('.percentage-text').data(_data).enter()
+                                        .append('text')
+                                        .attr('class', 'percentage-text')
+                                        .text(function(datum) {
+                                            return datum.percentage + "%";
+                                        })
+                                        .attr("x", function(datum, index) {
+                                            return (index * width) + (width / 2);
+                                        })
+                                        .attr("y", 40)
+                                        .attr("text-anchor", "middle")
+                                        .attr("font-size", "10px");
+                            }
                         });
             },
             renderOverallGirColorKey: function(key) {
                 var _data = [];
                 for (var gir = 7; gir <= 18; gir++) {
-                    _data.push({color: privateMethods.getGirSummaryColor(gir), value: gir});
+                    _data.push({
+                        color: privateMethods.getGirSummaryColor(gir),
+                        value: gir,
+                        percentage: Math.abs(Math.floor(((opts.girOverallKeyData[gir] / opts.totalRounds) * 100) + 0.5))
+                    });
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1243,12 +1323,138 @@
                                     .attr("font-weight", "bold")
                                     .attr("font-size", "10px")
                                     .attr("style", "fill: #FFFFFF");
+
+                            if (_data[0].percentage !== undefined) {
+                                keyG.selectAll('.percentage-text').data(_data).enter()
+                                        .append('text')
+                                        .attr('class', 'percentage-text')
+                                        .text(function(datum) {
+                                            return datum.percentage + "%";
+                                        })
+                                        .attr("x", function(datum, index) {
+                                            return (index * width) + (width / 2);
+                                        })
+                                        .attr("y", 40)
+                                        .attr("text-anchor", "middle")
+                                        .attr("font-size", "10px");
+                            }
+                        });
+            },
+            renderOverallFwyThreeColorKey: function(key) {
+                var _data = [], _vertical_data = [];
+                for (var fir = 14; fir >= 1; fir--) {
+                    _data.push({
+                        color: opts.fwy3LeftOverallColorSwatch[fir],
+                        value: fir, direction: "left"
+                    });
+                }
+                _data.push({
+                    color: opts.fwy3OverallColorSwatch[1],
+                    value: 1, direction: "center"
+                });
+                for (var fir = 1; fir <= 14; fir++) {
+                    _data.push({
+                        color: opts.fwy3RightOverallColorSwatch[fir],
+                        value: fir, direction: "right"
+                    });
+                }
+                for (var fir = 2; fir <= 14; fir++) {
+                    _vertical_data.push({
+                        color: opts.fwy3OverallColorSwatch[fir],
+                        value: fir, direction: "center"
+                    });
+                }
+
+                key.attr("transform", "translate(0, 65)")
+                        .each(function() {
+                            var keyG = d3.select(this);
+                            var width = 12.5;
+                            var halfWidth = width / 2;
+                            var quarterWidth = width / 3;
+                            keyG.selectAll('.key-item').data(_data).enter()
+                                    .append('rect')
+                                    .attr("class", "key-item")
+                                    .attr("x", function(datum, index) {
+                                        return index * width;
+                                    })
+                                    .attr("y", 0)
+                                    .attr("width", width)
+                                    .attr("height", halfWidth)
+                                    .attr("style", function(datum, index) {
+                                        return "fill: " + datum.color;
+                                    })
+                                    .on("mouseover", function(datum, index) {
+                                        var svg = opts.svg;
+                                        svg.selectAll('.roundSummary').each(function(o) {
+                                            var thisOpacity = 0.05;
+                                            if (datum.direction === "left" && o.lr > o.rr) {
+                                                if ((o.lr - o.rr) === datum.value) {
+                                                    thisOpacity = 1;
+                                                }
+                                            }
+                                            if (datum.direction === "right" && o.rr > o.lr) {
+                                                if ((o.rr - o.lr) === datum.value) {
+                                                    thisOpacity = 1;
+                                                }
+                                            }
+                                            if (datum.direction === "center" && o.rr === o.lr) {
+                                                if (o.fir === datum.value) {
+                                                    thisOpacity = 1;
+                                                }
+                                            }
+                                            d3.select(this)
+                                                    .attr('fill-opacity', thisOpacity)
+                                                    .attr('stroke-opacity', thisOpacity);
+                                        });
+                                    })
+                                    .on("mouseout", function() {
+                                        var svg = opts.svg;
+                                        svg.selectAll('.roundSummary').attr('stroke-opacity', 1)
+                                                .attr('fill-opacity', 1);
+                                    });
+
+
+                            keyG.selectAll('.vertical-key-item').data(_vertical_data).enter()
+                                    .append('rect')
+                                    .attr("class", 'key-item')
+                                    .attr("x", 14 * width)
+                                    .attr("y", function(datum, index) {
+                                        return quarterWidth - ((index + 1) * quarterWidth);
+                                    })
+                                    .attr("width", width)
+                                    .attr("height", quarterWidth)
+                                    .attr("style", function(datum, index) {
+                                        return "fill: " + datum.color;
+                                    })
+                                    .on("mouseover", function(datum, index) {
+                                        var svg = opts.svg;
+                                        svg.selectAll('.roundSummary').each(function(o) {
+                                            var thisOpacity = 0.05;
+                                            if (datum.direction === "center" && o.rr === o.lr) {
+                                                if (o.fir === datum.value) {
+                                                    thisOpacity = 1;
+                                                }
+                                            }
+                                            d3.select(this)
+                                                    .attr('fill-opacity', thisOpacity)
+                                                    .attr('stroke-opacity', thisOpacity);
+                                        });
+                                    })
+                                    .on("mouseout", function() {
+                                        var svg = opts.svg;
+                                        svg.selectAll('.roundSummary').attr('stroke-opacity', 1)
+                                                .attr('fill-opacity', 1);
+                                    });
                         });
             },
             renderOverallFwyTwoColorKey: function(key) {
                 var _data = [];
                 for (var fir = 2; fir <= 14; fir++) {
-                    _data.push({color: privateMethods.getFwyTwoColorSummaryColor(fir), value: fir});
+                    _data.push({
+                        color: privateMethods.getFwyTwoColorSummaryColor(fir),
+                        value: fir,
+                        percentage: Math.abs(Math.floor(((opts.fwy2OverallKeyData[fir] / opts.totalRounds) * 100) + 0.5))
+                    });
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1306,9 +1512,25 @@
                                     .attr("font-weight", "bold")
                                     .attr("font-size", "10px")
                                     .attr("style", "fill: #FFFFFF");
+
+                            if (_data[0].percentage !== undefined) {
+                                keyG.selectAll('.percentage-text').data(_data).enter()
+                                        .append('text')
+                                        .attr('class', 'percentage-text')
+                                        .text(function(datum) {
+                                            return datum.percentage + "%";
+                                        })
+                                        .attr("x", function(datum, index) {
+                                            return (index * width) + (width / 2);
+                                        })
+                                        .attr("y", 40)
+                                        .attr("text-anchor", "middle")
+                                        .attr("font-size", "10px");
+                            }
                         });
             },
             renderHoleByHoleKey: function(key, _data, width, data_attr, obj_attr_func) {
+                console.log(_data);
                 key.attr("transform", "translate(0,35)")
                         .each(function() {
                             var keyG = d3.select(this);
@@ -1354,29 +1576,46 @@
                                     .attr("y", 15)
                                     .attr("style", "fill: #FFFFFF")
                                     .attr("font-weight", "bold");
+
+                            if (_data[0].percentage !== undefined) {
+                                keyG.selectAll('.percentage-text').data(_data).enter()
+                                        .append('text')
+                                        .attr('class', 'percentage-text')
+                                        .text(function(datum) {
+                                            return datum.percentage + "%";
+                                        })
+                                        .attr("x", function(datum, index) {
+                                            return (index * width) + (width / 2);
+                                        })
+                                        .attr("y", 40)
+                                        .attr("text-anchor", "middle")
+                                        .attr("font-size", "10px");
+                            }
                         });
             },
             renderHoleByHolePuttsKey: function(key) {
                 var _data = [
-                    {putt: 0, name: "0", color: privateMethods.birdieColor(-2)},
-                    {putt: 1, name: "1", color: privateMethods.birdieColor(-1)},
-                    {putt: 2, name: "2", color: opts.color.parColorSwatch},
-                    {putt: 3, name: "3", color: privateMethods.bogeyColor(1)},
-                    {putt: 4, name: "4", color: privateMethods.bogeyColor(2)}
+                    {putt: 0, name: "0", color: privateMethods.birdieColor(-2), percentage: Math.abs(Math.floor(((opts.puttHoleByHoleKeyData[0] / opts.totalHoles) * 100) + 0.5))},
+                    {putt: 1, name: "1", color: privateMethods.birdieColor(-1), percentage: Math.abs(Math.floor(((opts.puttHoleByHoleKeyData[1] / opts.totalHoles) * 100) + 0.5))},
+                    {putt: 2, name: "2", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor(((opts.puttHoleByHoleKeyData[2] / opts.totalHoles) * 100) + 0.5))},
+                    {putt: 3, name: "3", color: privateMethods.bogeyColor(1), percentage: Math.abs(Math.floor(((opts.puttHoleByHoleKeyData[3] / opts.totalHoles) * 100) + 0.5))},
+                    {putt: 4, name: "4", color: privateMethods.bogeyColor(2), percentage: Math.abs(Math.floor(((opts.puttHoleByHoleKeyData[4] / opts.totalHoles) * 100) + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 25, "putt", function(obj) {
                     return obj.putts;
                 });
             },
             renderHoleByHoleScoreKey: function(key) {
+                console.log(opts.scoreHoleByHoleKeyData);
+                console.log("Total Holes: " + opts.totalHoles);
                 var _data = [
-                    {score: -3, name: "Albatross", color: privateMethods.birdieColor(-3)},
-                    {score: -2, name: "Eagle", color: privateMethods.birdieColor(-2)},
-                    {score: -1, name: "Birdie", color: privateMethods.birdieColor(-1)},
-                    {score: 0, name: "Par", color: opts.color.parColorSwatch},
-                    {score: 1, name: "Bogey", color: privateMethods.bogeyColor(1)},
-                    {score: 2, name: "Double Bogey", color: privateMethods.bogeyColor(2)},
-                    {score: 3, name: "Other", color: privateMethods.bogeyColor(3)}
+                    {score: -3, name: "Albatross", color: privateMethods.birdieColor(-3), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[-3] / opts.totalHoles) * 100) + 0.5))},
+                    {score: -2, name: "Eagle", color: privateMethods.birdieColor(-2), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[-2] / opts.totalHoles) * 100) + 0.5))},
+                    {score: -1, name: "Birdie", color: privateMethods.birdieColor(-1), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[-1] / opts.totalHoles) * 100) + 0.5))},
+                    {score: 0, name: "Par", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[0] / opts.totalHoles) * 100) + 0.5))},
+                    {score: 1, name: "Bogey", color: privateMethods.bogeyColor(1), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[1] / opts.totalHoles) * 100) + 0.5))},
+                    {score: 2, name: "Double Bogey", color: privateMethods.bogeyColor(2), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[2] / opts.totalHoles) * 100) + 0.5))},
+                    {score: 3, name: "Other", color: privateMethods.bogeyColor(3), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[3] / opts.totalHoles) * 100) + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "score", function(obj) {
                     return obj.score - obj.par;
@@ -1384,8 +1623,8 @@
             },
             renderHoleByHoleFwyTwoColorKey: function(key) {
                 var _data = [
-                    {fir: 1, name: "Fwy Hit", color: privateMethods.getFwyTwoColorSummaryColor(11)},
-                    {fir: 0, name: "Fwy Missed", color: opts.color.parColorSwatch}
+                    {fir: 1, name: "Fwy Hit", color: privateMethods.getFwyTwoColorSummaryColor(11), percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[1] / opts.totalHoles) * 100) + 0.5))},
+                    {fir: 0, name: "Fwy Missed", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[0] / opts.totalHoles) * 100) + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "fir", function(obj) {
                     return obj.fir;
@@ -1393,20 +1632,19 @@
             },
             renderHoleByHoleGirKey: function(key) {
                 var _data = [
-                    {gir: 1, name: "GIR", color: privateMethods.getGirSummaryColor(16)},
-                    {gir: 0, name: "No GIR", color: opts.color.parColorSwatch}
+                    {gir: 1, name: "GIR", color: privateMethods.getGirSummaryColor(16), percentage: Math.abs(Math.floor((opts.girHoleByHoleKeyData[1] / opts.totalHoles) * 100 + 0.5))},
+                    {gir: 0, name: "No GIR", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor((opts.girHoleByHoleKeyData[0] / opts.totalHoles) * 100 + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "gir", function(obj) {
                     return obj.gir;
                 });
             },
             renderHoleByHoleFwyThreeColorKey: function(key) {
-                //var color = (datum.fir === 0) ? ((datum.rough === "LR") ? opts.fwy3LeftOverallColorSwatch[2] : ((datum.rough === "RR") ? opts.fwy3RightOverallColorSwatch[2] : "#bcbddc")) : opts.fwy3OverallColorSwatch[14];
                 var _data = [
-                    {fir: -1, name: "Missed Left", color: opts.fwy3LeftOverallColorSwatch[2]},
-                    {fir: 1, name: "Fwy Hit", color: opts.fwy3OverallColorSwatch[14]},
-                    {fir: 2, name: "Missed Right", color: opts.fwy3RightOverallColorSwatch[2]},
-                    {fir: 0, name: "Unknown", color: "#bcbddc"}
+                    {fir: -1, name: "Missed Left", color: opts.fwy3LeftOverallColorSwatch[2], percentage: Math.abs(Math.floor(((opts.fwy3HoleByHoleKeyData.left / opts.totalHoles) * 100) + 0.5))},
+                    {fir: 1, name: "Fwy Hit", color: opts.fwy3OverallColorSwatch[14], percentage: Math.abs(Math.floor(((opts.fwy3HoleByHoleKeyData.hit / opts.totalHoles) * 100) + 0.5))},
+                    {fir: 2, name: "Missed Right", color: opts.fwy3RightOverallColorSwatch[2], percentage: Math.abs(Math.floor(((opts.fwy3HoleByHoleKeyData.right / opts.totalHoles) * 100) + 0.5))},
+                    {fir: 0, name: "Unknown", color: "#bcbddc", percentage: Math.abs(Math.floor(((opts.fwy3HoleByHoleKeyData.unknown / opts.totalHoles) * 100) + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "fir", function(obj) {
                     return (obj.fir === 0) ? ((obj.rough === "LR") ? -1 : ((obj.rough === "RR") ? 2 : 0)) : 1;
@@ -1442,7 +1680,7 @@
                     if (value > 0) {
                         value = "+" + score;
                     }
-                    _data.push({color: color, value: value, percentage: (opts.scoreOverAllKeyData[score] / opts.totalRounds) * 100});
+                    _data.push({color: color, value: value, percentage: Math.abs(Math.floor(((opts.scoreOverAllKeyData[score] / opts.totalRounds) * 100) + 0.5))});
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1463,14 +1701,14 @@
                                     .append('text')
                                     .attr('class', 'percentage-text')
                                     .text(function(datum) {
-                                        return parseFloat(datum.percentage).toFixed(2) + "%";
+                                        return datum.percentage + "%";
                                     })
                                     .attr("x", function(datum, index) {
                                         return (index) * width + halfWidth;
                                     })
-                                    .attr("y", 35)
+                                    .attr("y", 40)
                                     .attr("text-anchor", "middle")
-                                    .attr("font-size", "7px");
+                                    .attr("font-size", "10px");
 
                             keyG.selectAll('.key-item').data(_data).enter()
                                     .append('rect')
