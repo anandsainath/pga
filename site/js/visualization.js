@@ -262,7 +262,7 @@
                     {name: "Total", attributeName: "underPar"},
                     {name: "Strokes", attributeName: "totalScore"}
                 ];
-                svg.selectAll('columnHeader').
+                svg.selectAll('.columnHeader').
                         data(_columnHeaderData).enter()
                         .append("text")
                         .text(function(datum, index) {
@@ -345,6 +345,7 @@
                     sortOrder = false;
                 }
                 opts.sortOrder = sortOrder;
+                /** Different Sorting functions **/
                 sortItemsOnRoundScore = function(a, b) {
                     if (sortOrder) {
                         var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.score;
@@ -356,8 +357,69 @@
                     var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.score;
                     return b_val - a_val;
                 };
+                
+                sortItemsOnFwy = function(a, b) {
+                    if (sortOrder) {
+                        var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.fir;
+                        var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : b.eventSummary[roundIndex - 1].roundSummary.fir;
+                        return  a_val - b_val;
+                    }
+
+                    var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : a.eventSummary[roundIndex - 1].roundSummary.fir;
+                    var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.fir;
+                    return b_val - a_val;
+                };
+                
+                sortItemsOnGir = function(a, b) {
+                    if (sortOrder) {
+                        var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.gir;
+                        var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : b.eventSummary[roundIndex - 1].roundSummary.gir;
+                        return  a_val - b_val;
+                    }
+
+                    var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : a.eventSummary[roundIndex - 1].roundSummary.gir;
+                    var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.gir;
+                    return b_val - a_val;
+                };
+                
+                sortItemsOnPutts = function(a, b) {
+                    if (sortOrder) {
+                        var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.putt;
+                        var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : b.eventSummary[roundIndex - 1].roundSummary.putt;
+                        return  a_val - b_val;
+                    }
+
+                    var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : a.eventSummary[roundIndex - 1].roundSummary.putt;
+                    var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.putt;
+                    return b_val - a_val;
+                };
+                
+                
+                var sorterFunction;
+                switch(opts.mode){
+                    case mode.score.overall:
+                    case mode.score.holeByHole:
+                        sorterFunction = sortItemsOnRoundScore;
+                        break;
+                    case mode.fwy.threeColor.holeByHole:
+                    case mode.fwy.threeColor.overall:
+                    case mode.fwy.twoColor.overall:
+                    case mode.fwy.twoColor.holeByHole:
+                        sorterFunction = sortItemsOnFwy;
+                        break;
+                    case mode.gir.holeByHole:
+                    case mode.gir.overall:
+                        sorterFunction = sortItemsOnGir;
+                        break;
+                    case mode.putt.holeByHole:
+                    case mode.putt.overall:
+                        sorterFunction = sortItemsOnPutts;
+                        break;
+                }               
+                /** Different sorting functions end **/
+                
                 svg.selectAll('.tournaments')
-                        .sort(sortItemsOnRoundScore)
+                        .sort(sorterFunction)
                         .transition()
                         .ease('cubic-in-out')
                         .delay(function(datum, index) {
@@ -367,7 +429,7 @@
                         .attr("transform", function(datum, index) {
                             return "translate(0," + (15 + (23 * index)) + ")";
                         });
-                opts.data.sort(sortItemsOnRoundScore);
+                opts.data.sort(sorterFunction);
                 svg.selectAll('.sortArrow').each(function() {
                     if (arguments[0] !== selectedRound) {
                         d3.select(this).attr('xlink:href', '/images/sort_neutral.png');
