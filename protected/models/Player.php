@@ -102,11 +102,11 @@ class Player extends CActiveRecord {
 
     public function getPlayerList() {
         $criteria = new CDbCriteria;
-        $criteria->order = "first_name, last_name";
+        $criteria->order = "last_name, first_name";
         $list = $this->model()->findAll($criteria);
         $returnArray = array();
         foreach ($list as $player) {
-            $returnArray[$player->id_player] = "$player->first_name $player->last_name";
+            $returnArray[$player->id_player] = "$player->last_name, $player->first_name";
         }
         return $returnArray;
     }

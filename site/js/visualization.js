@@ -876,9 +876,9 @@
             },
             getPuttSummaryColor: function(diff) {
                 if (diff < 0) {
-                    return opts.color.negativeColor[Math.abs(Math.max(diff, -7))];
+                    return opts.color.positiveColor[Math.abs(Math.max(diff, -7))];
                 } else if (diff > 0) {
-                    return opts.color.positiveColor[Math.abs(Math.min(diff, 7))];
+                    return opts.color.negativeColor[Math.abs(Math.min(diff, 7))];
                 } else if (diff === 0) {
                     return opts.color.parColorSwatch;
                 }
