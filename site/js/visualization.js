@@ -165,10 +165,12 @@
             },
             onDataChanged: function(data) {
                 $('#' + opts.svgSelector).empty();
+                $(opts.keySelector).empty();
                 opts.data = data;
                 privateMethods.resetSize();
                 privateMethods.drawColumnHeaders();
                 privateMethods.drawViz();
+                privateMethods.renderKey();
                 privateMethods.addInteractions();
             }
         };
@@ -357,7 +359,7 @@
                     var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.score;
                     return b_val - a_val;
                 };
-                
+
                 sortItemsOnFwy = function(a, b) {
                     if (sortOrder) {
                         var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.fir;
@@ -369,7 +371,7 @@
                     var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.fir;
                     return b_val - a_val;
                 };
-                
+
                 sortItemsOnGir = function(a, b) {
                     if (sortOrder) {
                         var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.gir;
@@ -381,7 +383,7 @@
                     var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.gir;
                     return b_val - a_val;
                 };
-                
+
                 sortItemsOnPutts = function(a, b) {
                     if (sortOrder) {
                         var a_val = (a.eventSummary[roundIndex - 1].roundSummary === null) ? 9999 : a.eventSummary[roundIndex - 1].roundSummary.putt;
@@ -393,10 +395,10 @@
                     var b_val = (b.eventSummary[roundIndex - 1].roundSummary === null) ? 0 : b.eventSummary[roundIndex - 1].roundSummary.putt;
                     return b_val - a_val;
                 };
-                
-                
+
+
                 var sorterFunction;
-                switch(opts.mode){
+                switch (opts.mode) {
                     case mode.score.overall:
                     case mode.score.holeByHole:
                         sorterFunction = sortItemsOnRoundScore;
@@ -415,9 +417,9 @@
                     case mode.putt.overall:
                         sorterFunction = sortItemsOnPutts;
                         break;
-                }               
+                }
                 /** Different sorting functions end **/
-                
+
                 svg.selectAll('.tournaments')
                         .sort(sorterFunction)
                         .transition()
@@ -893,12 +895,12 @@
                 }
             },
             getGirSummaryColor: function(gir) {
-                if (gir === 13) {
+                if (gir === 12) {
                     return opts.color.parColorSwatch;
-                } else if (gir < 13) {
-                    return opts.color.fwyNegativeColor[Math.min(12 - gir, 5)];
+                } else if (gir < 12) {
+                    return opts.color.fwyNegativeColor[Math.min(11 - gir, 5)];
                 } else {
-                    return opts.color.fwyPositiveColor[Math.min(gir - 14, 5)];
+                    return opts.color.fwyPositiveColor[Math.min(gir - 13, 5)];
                 }
             },
             addTournamentStats: function(tournament, arguments) {
@@ -1244,12 +1246,16 @@
             },
             renderOverallPuttsKey: function(key) {
                 var _data = [];
+                var keyObject;
                 for (var putts = 22; putts <= 36; putts++) {
-                    _data.push({
+                    keyObject = {
                         color: privateMethods.getPuttSummaryColor(putts - 29),
-                        value: putts,
-                        percentage: Math.abs(Math.floor(((opts.puttOverAllKeyData[putts] / opts.totalRounds) * 100) + 0.5))
-                    });
+                        value: putts
+                    };
+                    if (opts.totalRounds !== 0) {
+                        keyObject.percentage = Math.abs(Math.floor(((opts.puttOverAllKeyData[putts] / opts.totalRounds) * 100) + 0.5));
+                    }
+                    _data.push(keyObject);
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1326,12 +1332,16 @@
             },
             renderOverallGirColorKey: function(key) {
                 var _data = [];
+                var keyObject;
                 for (var gir = 7; gir <= 18; gir++) {
-                    _data.push({
+                    keyObject = {
                         color: privateMethods.getGirSummaryColor(gir),
-                        value: gir,
-                        percentage: Math.abs(Math.floor(((opts.girOverallKeyData[gir] / opts.totalRounds) * 100) + 0.5))
-                    });
+                        value: gir
+                    };
+                    if (opts.totalRounds !== 0) {
+                        keyObject.percentage = Math.abs(Math.floor(((opts.girOverallKeyData[gir] / opts.totalRounds) * 100) + 0.5));
+                    }
+                    _data.push(keyObject);
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1515,12 +1525,16 @@
             },
             renderOverallFwyTwoColorKey: function(key) {
                 var _data = [];
+                var keyObject;
                 for (var fir = 2; fir <= 14; fir++) {
-                    _data.push({
+                    keyObject = {
                         color: privateMethods.getFwyTwoColorSummaryColor(fir),
-                        value: fir,
-                        percentage: Math.abs(Math.floor(((opts.fwy2OverallKeyData[fir] / opts.totalRounds) * 100) + 0.5))
-                    });
+                        value: fir
+                    };
+                    if (opts.totalRounds !== 0) {
+                        keyObject.percentage = Math.abs(Math.floor(((opts.fwy2OverallKeyData[fir] / opts.totalRounds) * 100) + 0.5));
+                    }
+                    _data.push(keyObject);
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1596,7 +1610,6 @@
                         });
             },
             renderHoleByHoleKey: function(key, _data, width, data_attr, obj_attr_func) {
-                console.log(_data);
                 key.attr("transform", "translate(0,35)")
                         .each(function() {
                             var keyG = d3.select(this);
@@ -1643,7 +1656,7 @@
                                     .attr("style", "fill: #FFFFFF")
                                     .attr("font-weight", "bold");
 
-                            if (_data[0].percentage !== undefined) {
+                            if (_data[0].percentage !== undefined && opts.totalHoles !== 0) {
                                 keyG.selectAll('.percentage-text').data(_data).enter()
                                         .append('text')
                                         .attr('class', 'percentage-text')
@@ -1672,8 +1685,6 @@
                 });
             },
             renderHoleByHoleScoreKey: function(key) {
-                console.log(opts.scoreHoleByHoleKeyData);
-                console.log("Total Holes: " + opts.totalHoles);
                 var _data = [
                     {score: -3, name: "Albatross", color: privateMethods.birdieColor(-3), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[-3] / opts.totalHoles) * 100) + 0.5))},
                     {score: -2, name: "Eagle", color: privateMethods.birdieColor(-2), percentage: Math.abs(Math.floor(((opts.scoreHoleByHoleKeyData[-2] / opts.totalHoles) * 100) + 0.5))},
@@ -1740,13 +1751,18 @@
             },
             renderOverallScoreKey: function(key) {
                 var _data = [];
+                var keyObject;
                 for (var score = -8; score <= 8; score++) {
                     var color = (score === 0) ? opts.color.parColorSwatch : privateMethods.getSummaryColor(score);
                     var value = score;
                     if (value > 0) {
                         value = "+" + score;
                     }
-                    _data.push({color: color, value: value, percentage: Math.abs(Math.floor(((opts.scoreOverAllKeyData[score] / opts.totalRounds) * 100) + 0.5))});
+                    keyObject = {color: color, value: value};
+                    if (opts.totalRounds !== 0) {
+                        keyObject.percentage = Math.abs(Math.floor(((opts.scoreOverAllKeyData[score] / opts.totalRounds) * 100) + 0.5));
+                    }
+                    _data.push(keyObject);
                 }
 
                 key.attr("transform", "translate(0,35)")
@@ -1763,18 +1779,20 @@
                                     .attr("y", -10)
                                     .attr("style", "fill: #000000");
 
-                            keyG.selectAll('.percentage-text').data(_data).enter()
-                                    .append('text')
-                                    .attr('class', 'percentage-text')
-                                    .text(function(datum) {
-                                        return datum.percentage + "%";
-                                    })
-                                    .attr("x", function(datum, index) {
-                                        return (index) * width + halfWidth;
-                                    })
-                                    .attr("y", 40)
-                                    .attr("text-anchor", "middle")
-                                    .attr("font-size", "10px");
+                            if (_data[0].percentage !== undefined) {
+                                keyG.selectAll('.percentage-text').data(_data).enter()
+                                        .append('text')
+                                        .attr('class', 'percentage-text')
+                                        .text(function(datum) {
+                                            return datum.percentage + "%";
+                                        })
+                                        .attr("x", function(datum, index) {
+                                            return (index) * width + halfWidth;
+                                        })
+                                        .attr("y", 40)
+                                        .attr("text-anchor", "middle")
+                                        .attr("font-size", "10px");
+                            }
 
                             keyG.selectAll('.key-item').data(_data).enter()
                                     .append('rect')
