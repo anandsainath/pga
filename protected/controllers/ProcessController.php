@@ -219,7 +219,7 @@ class ProcessController extends Controller {
         }
     }
 
-    public function actionHole($input_file = 'data/2013/hole.csv') {
+    public function actionHole($input_file = 'data/2012/hole.csv') {
         $row = 1;
         set_time_limit(0);
         $TOURNAMENT_YEAR_INDEX = 1;
@@ -272,11 +272,11 @@ class ProcessController extends Controller {
         if (($handle = fopen($input_file, "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
                 if (1 == $row) {
-//var_dump($data);
+                    //var_dump($data);
                     $row++;
                     continue;
                 }
-
+                
                 $permanent_tournament_number = intval($data[$PERMANENT_TOURNAMENT_NUMBER_INDEX]);
                 $tournament_year = $data[$TOURNAMENT_YEAR_INDEX];
                 $tournament = Tournament::model()->findByAttributes(array(
@@ -342,7 +342,7 @@ class ProcessController extends Controller {
                 } else {
                     var_dump($hole->getErrors());
                 }
-//break;
+                //break;
             }
         }
     }

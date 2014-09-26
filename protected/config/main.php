@@ -39,7 +39,7 @@ return array(
                 '<controller:\w+>/<id:\d+>' => '<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-                'get-data/<id_player:\d+>' => '/API/GetData',
+                'get-data/<id_player:\d+>/<year:\d+>' => '/API/GetData',
                 'get-players' => '/API/GetPlayers',
                 'original' => '/Site/Original',
                 'home' => '/Site/Home'

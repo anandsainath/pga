@@ -3,6 +3,7 @@ $base_url = Yii::app()->request->baseUrl;
 $cs = Yii::app()->clientScript;
 $cs->registerScriptFile($base_url . '/js/menu.js', CClientScript::POS_BEGIN);
 $cs->registerScriptFile($base_url . '/js/visualization.js', CClientScript::POS_BEGIN);
+$cs->registerScriptFile($base_url . '/js/stat.js', CClientScript::POS_BEGIN);
 $cs->registerScriptFile($base_url . '/js/dataLoader.js', CClientScript::POS_BEGIN);
 $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::POS_BEGIN);
 ?>
@@ -20,11 +21,10 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
         $.get("/get-players", function(_list) {
             $('#formFields').append($(_list));
             $('#yearSelect, #playerSelect').select2();
-
-            $('#playerSelect').on("change", function(e) {
+            $('#playerSelect, #yearSelect').on("change", function(e) {
                 $('.modal').show();
                 $.dataLoader({
-                    params: '/' + e.val,
+                    params: '/' + $('#playerSelect').val() + '/' + $('#yearSelect').val(),
                     onDataLoad: function(data) {
                         viz.onDataChanged(data);
                         $('.modal').hide();
@@ -46,6 +46,42 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
                     mode: 'SCORE_MODE',
                     keySelector: '#golfKey',
                     parButtonColumnSelector: '#parButtonColumn'
+                });
+
+                stat = $('#statViz').stat({
+                    data: [{
+                            key: "Scoring Average",
+                            value: 70.278,
+                            rank: 35
+                        }, {
+                            key: "Driving distance",
+                            value: 292.4,
+                            rank: 70
+                        }, {
+                            key: "Driving accuracy",
+                            value: "58.01%",
+                            rank: 140
+                        }, {
+                            key: "GIR",
+                            value: "65.26%",
+                            rank: 79
+                        }, {
+                            key: "Strokes gained putting",
+                            value: "0.249",
+                            rank: 50
+                        }, {
+                            key: "Sand save percentage",
+                            value: "61.27%",
+                            rank: 4
+                        }, {
+                            key: "All-around ranking",
+                            value: "497",
+                            rank: 32
+                        }, {
+                            key: "Money won",
+                            value: "$2,158,019",
+                            rank: 38
+                        }]
                 });
             }
         });
@@ -80,15 +116,21 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
         <div id="formFields" style="margin: 30px 0px 0px 0px">
             <select id="yearSelect" name="year" data-placeholder="Select Year" >
                 <option value="2013" selected="selected">2013</option>
+                <option value="2012">2012</option>
             </select> &nbsp;&nbsp;
         </div>
     </div>
 </div>
 <hr/>
-
 <div class='row'>
     <div class='col-md-12'>
         <svg id="golfViz" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="650"></svg>
     </div>
 </div>
 <hr/>
+<div class="row">
+    <div class='col-md-12'>
+        <svg id="statViz" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="300"></svg>
+    </div>
+</div>
+

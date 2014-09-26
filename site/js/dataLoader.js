@@ -16,8 +16,7 @@
         defaults: {
             data: undefined,
             debug: false,
-            params: '/1810',
-            //url: './data/data_tournament.php?id=1810',
+            params: '/1810/2013',
             url: "/get-data",
             onDataLoad: function(data) {
                 console.log("Data loaded: ", data);
