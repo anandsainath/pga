@@ -54,11 +54,11 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
                             value: 70.278,
                             rank: 35
                         }, {
-                            key: "Driving distance",
+                            key: "Driving Distance",
                             value: 292.4,
                             rank: 70
                         }, {
-                            key: "Driving accuracy",
+                            key: "Driving Accuracy",
                             value: "58.01%",
                             rank: 140
                         }, {
@@ -66,19 +66,19 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
                             value: "65.26%",
                             rank: 79
                         }, {
-                            key: "Strokes gained putting",
+                            key: "Strokes Gained Putting",
                             value: "0.249",
                             rank: 50
                         }, {
-                            key: "Sand save percentage",
+                            key: "Sand Save",
                             value: "61.27%",
                             rank: 4
                         }, {
-                            key: "All-around ranking",
+                            key: "All-Around Ranking",
                             value: "497",
                             rank: 32
                         }, {
-                            key: "Money won",
+                            key: "Money Won",
                             value: "$2,158,019",
                             rank: 38
                         }]
@@ -89,6 +89,14 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
 </script>
 <div class="modal"></div>
 <div class='row'>
+    <div class="col-md-3" style="height: 105px;">
+        <div id="formFields" style="margin: 30px 0px 0px 0px">
+            <select id="yearSelect" name="year" data-placeholder="Select Year" >
+                <option value="2013" selected="selected">2013</option>
+                <option value="2012">2012</option>
+            </select> &nbsp;&nbsp;
+        </div>
+    </div>
     <div class="col-md-3" style="height: 105px;">
         <div class="row">
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="80" width="250" preserveAspectRatio="xMidYMid meet" id="golfMenu"></svg>
@@ -109,16 +117,8 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
             </div>        
         </div>
     </div>
-    <div class="col-md-5" style="height: 105px;">
+    <div class="col-md-6" style="height: 105px;">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="80" width="500" preserveAspectRatio="xMidYMid meet" id="golfKey"></svg>
-    </div>
-    <div class="col-md-4" style="height: 105px;">
-        <div id="formFields" style="margin: 30px 0px 0px 0px">
-            <select id="yearSelect" name="year" data-placeholder="Select Year" >
-                <option value="2013" selected="selected">2013</option>
-                <option value="2012">2012</option>
-            </select> &nbsp;&nbsp;
-        </div>
     </div>
 </div>
 <hr/>

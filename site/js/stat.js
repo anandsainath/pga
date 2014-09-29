@@ -47,22 +47,15 @@
                         .attr("style", "stroke: #000000;");
 
                 opts.svg.selectAll('.tick').data(opts.data).enter()
-                        .append('line')
+                        .append('circle')
                         .attr('class', 'tick')
-                        .attr('x1', function(datum, index) {
-                            return opts.dimension.padding.left + ((index + 1) * opts.spacing) - opts.dimension.tick.width;
+                        .attr('cx', function(datum, index) {
+                            return opts.dimension.padding.left + ((index + 1) * opts.spacing);
                         })
-                        .attr('y1', function(datum, index) {
+                        .attr('cy', function(datum, index) {
                             return 80 + ((datum.rank / 140) * opts.dimension.bar.height);
                         })
-                        .attr('x2', function(datum, index) {
-                            return opts.dimension.padding.left + ((index + 1) * opts.spacing) + opts.dimension.tick.width;
-                        })
-                        .attr('y2', function(datum, index) {
-                            return 80 + ((datum.rank / 140) * opts.dimension.bar.height);
-                        })
-                        .attr("stroke-width", "2px")
-                        .attr("style", "stroke: #FF0000;");
+                        .attr('r', opts.dimension.tick.width).attr("style", "fill: #FF0000;");
 
                 opts.svg.selectAll('.column-stat').data(opts.data).enter()
                         .append('text')
@@ -74,10 +67,26 @@
                             return opts.dimension.padding.left + (((index + 1) * opts.spacing) - (2 * opts.dimension.tick.width));
                         })
                         .attr('y', function(datum, index) {
-                            return 84 + ((datum.rank / 140) * opts.dimension.bar.height);
+                            return 78 + ((datum.rank / 140) * opts.dimension.bar.height);
                         })
                         .attr("text-anchor", "end")
-                        .attr("font-size", "12px")
+                        .attr("font-size", "14px")
+                        .attr("style", "fill: #000000;");
+                
+                opts.svg.selectAll('.column-rank').data(opts.data).enter()
+                        .append('text')
+                        .attr('class', 'column-rank')
+                        .text(function(datum) {
+                            return "Rank " + datum.rank;
+                        })
+                        .attr('x', function(datum, index) {
+                            return opts.dimension.padding.left + (((index + 1) * opts.spacing) - (2 * opts.dimension.tick.width));
+                        })
+                        .attr('y', function(datum, index) {
+                            return 88 + ((datum.rank / 140) * opts.dimension.bar.height);
+                        })
+                        .attr("text-anchor", "end")
+                        .attr("font-size", "10px")
                         .attr("style", "fill: #000000;");
 
                 opts.svg.selectAll('.column-header').data(opts.data).enter()
