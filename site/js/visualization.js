@@ -784,7 +784,7 @@
                             return (tournamentIndex > (opts.data.length / 2)) ? 'top' : 'bottom';
                         })
                         .attr('data-title', function(datum, index) {
-                            return privateMethods.getHoleTooltipContent(datum, index);
+                            return privateMethods.getHoleTooltipContent(datum, index+1);
                         });
             },
             getHoleTooltipContent: function(datum, index) {
