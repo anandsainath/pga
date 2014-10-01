@@ -92,16 +92,25 @@
                 opts.svg.selectAll('.column-header').data(opts.data).enter()
                         .append('text')
                         .attr('class', 'column-header')
-                        .text(function(datum) {
-                            return datum.key;
-                        })
                         .attr('x', function(datum, index) {
                             return opts.dimension.padding.left + ((index + 1) * opts.spacing);
                         })
-                        .attr('y', 60)
+                        .attr('y', 35)
                         .attr("text-anchor", "middle")
                         .attr("font-size", "10px")
-                        .attr("style", "fill: #000000;");
+                        .attr("style", "fill: #000000;")
+                        .each(function(datum){
+                            var _this = d3.select(this);
+                            _this.selectAll('.tspan').data(datum.key).enter()
+                                .append("tspan")
+                                .attr("x", _this.attr("x"))
+                                .attr("dy", "1.2em")
+                                .text(function(datum) {
+                                    console.log(datum);
+                                    return datum;
+                                });
+                        });
+                            
             }
         };
         /** Code from where the execution starts **/

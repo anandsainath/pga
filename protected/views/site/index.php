@@ -50,35 +50,35 @@ $cs->registerScriptFile($base_url . '/select2/select2.min.js', CClientScript::PO
 
                 stat = $('#statViz').stat({
                     data: [{
-                            key: "Scoring Average",
+                            key: ["Scoring","Average"],
                             value: 70.278,
                             rank: 35
                         }, {
-                            key: "Driving Distance",
+                            key: ["Driving", "Distance"],
                             value: 292.4,
                             rank: 70
                         }, {
-                            key: "Driving Accuracy",
+                            key: ["Driving", "Accuracy"],
                             value: "58.01%",
                             rank: 140
                         }, {
-                            key: "GIR",
+                            key: ["Greens In","Regulation"],
                             value: "65.26%",
                             rank: 79
                         }, {
-                            key: "Strokes Gained Putting",
+                            key: ["Strokes Gained", "Putting"],
                             value: "0.249",
                             rank: 50
                         }, {
-                            key: "Sand Save",
+                            key: ["Sand","Saves"],
                             value: "61.27%",
                             rank: 4
                         }, {
-                            key: "All-Around Ranking",
+                            key: ["All-Around", "Ranking"],
                             value: "497",
                             rank: 32
                         }, {
-                            key: "Money Won",
+                            key: ["Money", "Won"],
                             value: "$2,158,019",
                             rank: 38
                         }]

@@ -38,7 +38,7 @@
                 //birdieColorSwatch: ["#FFECC0", '#FFD060', '#FFAE18'],
                 bogeyColorSwatch: ["#fee0d2", "#fc9272", "#ef3b2c"],
                 //birdieColorSwatch: ["#e5f5e0", '#a1d99b', '#41ab5d'],
-                birdieColorSwatch: ["#a1d99b", '#31a354', '#006d2c'],
+                birdieColorSwatch: ["#c7e9c0", '#31a354', '#006d2c'],
                 parColorSwatch: "#EFEFEF",
                 //negativeColor: ["#FFF6DF", "#FFECC0", "#FFE3A0", "#FFD980", "#FFD060", "#FFBD21", "#FFB61C", "#FFAE18"],
                 //positiveColor: ["#E4EDEA", "#D7E8E2", "#CCECE1", "#BEEADB", "#AFEAD6", "#86d9CF", "#56C7CB", "#02A1B7"],
@@ -1057,7 +1057,8 @@
                                 show: 500,
                                 hide: 100
                             },
-                            html: true
+                            html: true,
+                            trigger: 'click'
                         });
                         break;
                     case mode.score.holeByHole:
