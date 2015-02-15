@@ -10,7 +10,7 @@ class APIController extends Controller {
 
     public function actionGetPlayers() {
         echo CHtml::listBox('players', '1810', Player::model()->getPlayerList(), array(
-            'id' => 'playerSelect'
+            'id' => 'playerSelect', 'class' => 'js-select form-control'
         ));
     }
 
@@ -46,10 +46,10 @@ class APIController extends Controller {
                 'round' => intval($obj->round_number)
             );
 
-            if($_array['fir'] == 0 && $obj->tee_shot_landing_location == 3){
+            /*if($_array['fir'] == 0 && $obj->tee_shot_landing_location == 3){
                 //if Tee shot lands at the Green, its taken as a FWY count..
                 $_array['fir'] = 1;
-            }
+            }*/
             
             if ($_array['fir'] == 0) {
                 switch ($obj->tee_shot_landing_location_detail) {

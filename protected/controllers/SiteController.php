@@ -2,7 +2,6 @@
 
 class SiteController extends Controller {
 
-
     /**
      * This is the default 'index' action that is invoked
      * when an action is not explicitly requested by users.
@@ -12,19 +11,20 @@ class SiteController extends Controller {
         $this->pageTitle = "Visualization of a player's year statistics";
         $this->render("index");
     }
-    
+
     /*
      * Action that links to the original page.
      */
-    public function actionOriginal(){
+
+    public function actionOriginal() {
         $this->layout = 'empty';
         $this->pageTitle = "Tournament Visualization";
         $this->render('original');
     }
-    
-    public function actionHome(){
-        $this->layout = 'fluid';
-        $this->pageTitle = "Shotlink Visualization";
+
+    public function actionNew() {
+        $this->layout = 'home';
         $this->render("home");
     }
+
 }

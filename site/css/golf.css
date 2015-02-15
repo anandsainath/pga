@@ -30,6 +30,11 @@
     opacity: 1 !important;
 }
 
+.top-divider{
+    border-top: 1px solid #EEEEEE;
+    padding-top: 10px;
+}
+
 .page-header {
     border-bottom: 1px solid #EEEEEE;
     margin: 10px 0 10px !important;

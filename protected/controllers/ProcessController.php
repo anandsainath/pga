@@ -276,7 +276,7 @@ class ProcessController extends Controller {
                     $row++;
                     continue;
                 }
-                
+
                 $permanent_tournament_number = intval($data[$PERMANENT_TOURNAMENT_NUMBER_INDEX]);
                 $tournament_year = $data[$TOURNAMENT_YEAR_INDEX];
                 $tournament = Tournament::model()->findByAttributes(array(
@@ -503,6 +503,38 @@ class ProcessController extends Controller {
                 $row++;
             }
         }
+    }
+
+    public function actionShot($inputFile = 'data/2012/shot.csv') {
+        $row = 1;
+
+        $PERMANENT_TOURNAMENT_NUMBER_INDEX = 10;
+        $TOURNAMENT_YEAR_INDEX = 2;
+
+        var_dump("ANAND");
+        
+        if (($handle = fopen($inputFile, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 0)) !== FALSE) {
+                var_dump("hereeee");
+                var_dump($data);
+                if (1 == $row) {
+                    $row++;
+                    continue;
+                }
+
+                $permanent_tournament_number = intval($data[$PERMANENT_TOURNAMENT_NUMBER_INDEX]);
+                $tournament_year = $data[$TOURNAMENT_YEAR_INDEX];
+
+                var_dump($permanent_tournament_number, $tournament_year);
+                $tournament = Tournament::model()->findByAttributes(array(
+                    'permanent_tournament_number' => $permanent_tournament_number,
+                    'year' => $tournament_year
+                ));
+                var_dump($tournament);
+                break;
+            }
+        }
+        var_dump("I am here!");
     }
 
 }

@@ -36,17 +36,23 @@
                 //parColorSwatch: "#D9D9D9",
                 //bogeyColorSwatch: ['#D7E8E2', "#AFEAD6", "#02A1B7"],
                 //birdieColorSwatch: ["#FFECC0", '#FFD060', '#FFAE18'],
-                bogeyColorSwatch: ["#fee0d2", "#fc9272", "#ef3b2c"],
+                // bogeyColorSwatch: ["#fee0d2", "#fc9272", "#ef3b2c"], -- last
                 //birdieColorSwatch: ["#e5f5e0", '#a1d99b', '#41ab5d'],
-                birdieColorSwatch: ["#c7e9c0", '#31a354', '#006d2c'],
-                parColorSwatch: "#EFEFEF",
+                // birdieColorSwatch: ["#c7e9c0", '#31a354', '#006d2c'], -- last
                 //negativeColor: ["#FFF6DF", "#FFECC0", "#FFE3A0", "#FFD980", "#FFD060", "#FFBD21", "#FFB61C", "#FFAE18"],
                 //positiveColor: ["#E4EDEA", "#D7E8E2", "#CCECE1", "#BEEADB", "#AFEAD6", "#86d9CF", "#56C7CB", "#02A1B7"],
+                // positiveColor: ["#f7fcf5", "#e5f5e0", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32"],
+                // parColorSwatch: "#EFEFEF",                
+                bogeyColorSwatch: ["#bdbdbd", "#737373", "#252525"],
+                birdieColorSwatch: ["#fee0d2", "#fc9272", "#ef3b2c"],
+                parColorSwatch: "#f7fbff",
                 negativeColor: ["#fff5f0", "#fee0d2", "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#99000d"],
-                positiveColor: ["#f7fcf5", "#e5f5e0", "#c7e9c0", "#a1d99b", "#74c476", "#41ab5d", "#238b45", "#005a32"],
+                positiveColor: ["#f0f0f0", "#d9d9d9", "#bdbdbd", "#969696", "#737373", "#525252", "#252525", "#000000"],
                 placeFontColor: '#ABABAB',
-                fwyPositiveColor: ['#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45'],
-                fwyNegativeColor: ['#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d'],
+                //fwyPositiveColor: ['#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45'],
+                // fwyNegativeColor: ['#fee0d2', '#fcbba1', '#fc9272', '#fb6a4a', '#ef3b2c', '#cb181d'],
+                fwyPositiveColor: ['#feedde', '#fdd0a2', '#fdae6b', '#fd8d3c', '#f16913', '#d94801'],
+                fwyNegativeColor: ['#eff3ff', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#084594'],
                 fwy3OverallColorSwatch: [],
                 fwy3LeftOverallColorSwatch: [],
                 fwy3RightOverallColorSwatch: []
@@ -587,6 +593,10 @@
                     opts.fwy2OverallKeyData[i + 8] = 0;
                     opts.fwy2OverallKeyData[i + 16] = 0;
                 }
+                
+                //Keeps the count of the spillage on both the sides.
+                opts.scoreOverAllKeyData[9] = opts.scoreOverAllKeyData[-9] = 0;
+                opts.fwy2HoleByHoleKeyData[-1] = 0;
 
                 var svg = opts.svg;
                 opts.dimension.nextTournamentLocation = opts.dimension.roundHeight + opts.dimension.tournamentPadding;
@@ -618,7 +628,13 @@
                                                     if (datum !== null) {
                                                         var diff = datum.score - datum.par;
                                                         var color = privateMethods.getSummaryColor(diff);
-                                                        opts.scoreOverAllKeyData[diff] = opts.scoreOverAllKeyData[diff] + 1;
+                                                        if(diff >= 9){
+                                                            opts.scoreOverAllKeyData[9] = opts.scoreOverAllKeyData[9] + 1;
+                                                        }else if(diff <= -9){
+                                                            opts.scoreOverAllKeyData[-9] = opts.scoreOverAllKeyData[-9] + 1;
+                                                        }else{
+                                                            opts.scoreOverAllKeyData[diff] = opts.scoreOverAllKeyData[diff] + 1;                                                            
+                                                        }
                                                         opts.totalRounds = opts.totalRounds + 1;
                                                         return "fill:" + color + "; stroke: #c0c0c0; stroke-width: 0.25px; vector-effect: non-scaling-stroke;";
                                                     }
@@ -643,7 +659,13 @@
                                                 break;
                                             case mode.fwy.twoColor.holeByHole:
                                                 privateMethods.drawHole(round, [roundData.roundSummary], roundData.holeDetails, tournamentIndex, function(datum, index) {
-                                                    var color = (datum.fir === 0) ? opts.color.parColorSwatch : privateMethods.getFwyTwoColorSummaryColor(11);
+                                                    var color;
+                                                    if(datum.par === 3){
+                                                        color = "#c6dbef";
+                                                        datum.fir = -1;
+                                                    }else{
+                                                        color = (datum.fir === 0) ? opts.color.parColorSwatch : "#a1d99b";
+                                                    }
                                                     opts.fwy2HoleByHoleKeyData[datum.fir] += 1;
                                                     opts.totalHoles += 1;
                                                     return "fill:" + color + ";";
@@ -890,6 +912,9 @@
                 if (fir === 8) {
                     return opts.color.parColorSwatch;
                 } else if (fir < 8) {
+                    if(fir == 0){
+                        fir = 1;
+                    }
                     return opts.color.fwyNegativeColor[7 - fir];
                 } else {
                     return opts.color.fwyPositiveColor[Math.min(fir - 9, 5)];
@@ -1528,6 +1553,13 @@
             renderOverallFwyTwoColorKey: function(key) {
                 var _data = [];
                 var keyObject;
+                
+                _data.push({
+                    color: privateMethods.getFwyTwoColorSummaryColor(1),
+                    value: "< 2",
+                    percentage: Math.abs(Math.floor((( (opts.fwy2OverallKeyData[0]+opts.fwy2OverallKeyData[1]) / opts.totalRounds) * 100) + 0.5))
+                })
+
                 for (var fir = 2; fir <= 14; fir++) {
                     keyObject = {
                         color: privateMethods.getFwyTwoColorSummaryColor(fir),
@@ -1546,10 +1578,11 @@
                             var width = 25;
                             var halfWidth = width / 2;
 
-                            keyG.append("text").text("Total Fairways Hit")
+                            keyG.append("text").text("FIR")
                                     .attr("font-size", "12px")
                                     .attr("text-anchor", "middle")
-                                    .attr("x", width * 8 + halfWidth)
+                                    .attr("font-weight", "bold")
+                                    .attr("x", width * 6 + halfWidth)
                                     .attr("y", -10)
                                     .attr("style", "fill: #000000");
 
@@ -1567,8 +1600,26 @@
                                     })
                                     .on("mouseover", function(datum) {
                                         var svg = opts.svg;
+
+                                        var operator, value;
+                                        if(datum.value == "< 2"){
+                                            operator = "<";
+                                            value = 2;
+                                        }else{
+                                            operator = "=";
+                                            value = parseInt(datum.value);
+                                        }
+
                                         svg.selectAll('.roundSummary').each(function(o) {
-                                            var thisOpacity = (o.fir === parseInt(datum.value)) ? 1 : 0.05;
+                                            var thisOpacity;
+                                            switch(operator){
+                                                case "<":
+                                                    thisOpacity = (o.fir < value)? 1 : 0.05;
+                                                    break;
+                                                case "=":
+                                                    thisOpacity = (o.fir === value) ? 1 : 0.05;
+                                                    break;
+                                            }
                                             d3.select(this)
                                                     .attr('fill-opacity', thisOpacity)
                                                     .attr('stroke-opacity', thisOpacity);
@@ -1593,25 +1644,49 @@
                                     .attr("text-anchor", "middle")
                                     .attr("font-weight", "bold")
                                     .attr("font-size", "10px")
-                                    .attr("style", "fill: #FFFFFF");
+                                    .attr("style", function(datum, index){
+                                        return (datum.value >= 6 && datum.value <= 10)? "fill: #000000;" : "fill: #FFFFFF;";
+                                    });
 
                             if (_data[0].percentage !== undefined) {
                                 keyG.selectAll('.percentage-text').data(_data).enter()
                                         .append('text')
                                         .attr('class', 'percentage-text')
                                         .text(function(datum) {
-                                            return datum.percentage + "%";
+                                            return datum.percentage;
                                         })
                                         .attr("x", function(datum, index) {
                                             return (index * width) + (width / 2);
                                         })
                                         .attr("y", 40)
                                         .attr("text-anchor", "middle")
-                                        .attr("font-size", "10px");
+                                        .attr("font-size", "11px");
+
+                                keyG.append("line")
+                                        .attr("x1", 0)
+                                        .attr("y1", 55)
+                                        .attr("x2", width * _data.length)
+                                        .attr("y2", 55)
+                                        .attr("stroke", "black")
+                                        .attr("style", "stroke-width: 2px; fill: #000000");
+                                
+                                keyG.append("rect")
+                                        .attr("x", width * ((_data.length/2)-0.5) + (width/2) - 50)
+                                        .attr("y", 45)
+                                        .attr("width", 100)
+                                        .attr("height", 20)
+                                        .attr("style", "fill: #FFFFFF");
+                                
+                                keyG.append("text").text("In Percentage")
+                                    .attr("font-size", "10px")
+                                    .attr("text-anchor", "middle")
+                                    .attr("x", width * ((_data.length/2)-0.5) + (width/2))
+                                    .attr("y", 58)
+                                    .attr("style", "fill: #000000");
                             }
                         });
             },
-            renderHoleByHoleKey: function(key, _data, width, data_attr, obj_attr_func) {
+            renderHoleByHoleKey: function(key, _data, width, data_attr, obj_attr_func, title, text_color_array) {
                 key.attr("transform", "translate(0,35)")
                         .each(function() {
                             var keyG = d3.select(this);
@@ -1655,15 +1730,26 @@
                                         return (index * width) + (width / 2);
                                     })
                                     .attr("y", 15)
-                                    .attr("style", "fill: #FFFFFF")
+                                    .attr("style", function(datum, index){
+                                        return "fill: " + text_color_array[index];
+                                    })
                                     .attr("font-weight", "bold");
 
                             if (_data[0].percentage !== undefined && opts.totalHoles !== 0) {
+
+                                 keyG.append("text").text(title)
+                                    .attr("font-size", "12px")
+                                    .attr("text-anchor", "middle")
+                                    .attr("x", width * ((_data.length/2) - 0.5) + (width/2))
+                                    .attr("y", -10)
+                                    .attr("font-weight", "bold")
+                                    .attr("style", "fill: #000000");
+
                                 keyG.selectAll('.percentage-text').data(_data).enter()
                                         .append('text')
                                         .attr('class', 'percentage-text')
                                         .text(function(datum) {
-                                            return datum.percentage + "%";
+                                            return datum.percentage;
                                         })
                                         .attr("x", function(datum, index) {
                                             return (index * width) + (width / 2);
@@ -1671,6 +1757,28 @@
                                         .attr("y", 40)
                                         .attr("text-anchor", "middle")
                                         .attr("font-size", "10px");
+
+                                 keyG.append("line")
+                                        .attr("x1", 0)
+                                        .attr("y1", 55)
+                                        .attr("x2", width * _data.length)
+                                        .attr("y2", 55)
+                                        .attr("stroke", "black")
+                                        .attr("style", "stroke-width: 2px; fill: #000000");
+                                
+                                keyG.append("rect")
+                                        .attr("x", width * ((_data.length/2)-0.5) + (width/2) - 50)
+                                        .attr("y", 45)
+                                        .attr("width", 100)
+                                        .attr("height", 20)
+                                        .attr("style", "fill: #FFFFFF");
+                                
+                                keyG.append("text").text("In Percentage")
+                                    .attr("font-size", "10px")
+                                    .attr("text-anchor", "middle")
+                                    .attr("x", width * ((_data.length/2)-0.5) + (width/2))
+                                    .attr("y", 58)
+                                    .attr("style", "fill: #000000");
                             }
                         });
             },
@@ -1684,7 +1792,7 @@
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 25, "putt", function(obj) {
                     return obj.putts;
-                });
+                }, "SCORE", ["#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", "#FFFFFF", "#FFFFFF"]);
             },
             renderHoleByHoleScoreKey: function(key) {
                 var _data = [
@@ -1698,16 +1806,17 @@
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "score", function(obj) {
                     return obj.score - obj.par;
-                });
+                }, "SCORE", ["#FFFFFF", "#FFFFFF", "#000000", "#000000", "#000000", "#FFFFFF", "#FFFFFF"]);
             },
             renderHoleByHoleFwyTwoColorKey: function(key) {
                 var _data = [
-                    {fir: 1, name: "Fwy Hit", color: privateMethods.getFwyTwoColorSummaryColor(11), percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[1] / opts.totalHoles) * 100) + 0.5))},
-                    {fir: 0, name: "Fwy Missed", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[0] / opts.totalHoles) * 100) + 0.5))}
+                    {fir: 1, name: "Fwy Hit", color: "#a1d99b", percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[1] / opts.totalHoles) * 100) + 0.5))},
+                    {fir: 0, name: "Fwy Missed", color: opts.color.parColorSwatch, percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[0] / opts.totalHoles) * 100) + 0.5))},
+                    {fir: -1, name: "Par 3", color: "#c6dbef", percentage: Math.abs(Math.floor(((opts.fwy2HoleByHoleKeyData[-1] / opts.totalHoles) * 100) + 0.5))}
                 ];
                 privateMethods.renderHoleByHoleKey(key, _data, 60, "fir", function(obj) {
                     return obj.fir;
-                });
+                }, "FIR", ["#000000", "#000000", "#000000"]);
             },
             renderHoleByHoleGirKey: function(key) {
                 var _data = [
@@ -1754,6 +1863,13 @@
             renderOverallScoreKey: function(key) {
                 var _data = [];
                 var keyObject;
+
+                _data.push({
+                    color: privateMethods.getSummaryColor(-9),
+                    value: "< -8",
+                    percentage: Math.abs(Math.floor(((opts.scoreOverAllKeyData[-9] / opts.totalRounds) * 100) + 0.5))
+                });
+
                 for (var score = -8; score <= 8; score++) {
                     var color = (score === 0) ? opts.color.parColorSwatch : privateMethods.getSummaryColor(score);
                     var value = score;
@@ -1767,6 +1883,14 @@
                     _data.push(keyObject);
                 }
 
+                _data.push({
+                    color: privateMethods.getSummaryColor(9),
+                    value: "> +8",
+                    percentage: Math.abs(Math.floor(((opts.scoreOverAllKeyData[9] / opts.totalRounds) * 100) + 0.5))
+                });
+                
+                console.log(_data, opts.scoreOverAllKeyData);
+
                 key.attr("transform", "translate(0,35)")
                         .each(function() {
                             var keyG = d3.select(this);
@@ -1774,11 +1898,12 @@
                             var width = 25;
                             var halfWidth = width / 2;
 
-                            keyG.append("text").text("Round Strokes Relation to Par")
+                            keyG.append("text").text("SCORE")
                                     .attr("font-size", "12px")
                                     .attr("text-anchor", "middle")
-                                    .attr("x", width * 8 + halfWidth)
+                                    .attr("x", width * 9 + halfWidth)
                                     .attr("y", -10)
+                                    .attr("font-weight", "bold")
                                     .attr("style", "fill: #000000");
 
                             if (_data[0].percentage !== undefined) {
@@ -1786,14 +1911,36 @@
                                         .append('text')
                                         .attr('class', 'percentage-text')
                                         .text(function(datum) {
-                                            return datum.percentage + "%";
+                                            return datum.percentage;
                                         })
                                         .attr("x", function(datum, index) {
                                             return (index) * width + halfWidth;
                                         })
                                         .attr("y", 40)
                                         .attr("text-anchor", "middle")
-                                        .attr("font-size", "10px");
+                                        .attr("font-size", "11px");
+                                
+                                keyG.append("line")
+                                        .attr("x1", 0)
+                                        .attr("y1", 55)
+                                        .attr("x2", width * 19)
+                                        .attr("y2", 55)
+                                        .attr("stroke", "black")
+                                        .attr("style", "stroke-width: 2px; fill: #000000");
+                                
+                                keyG.append("rect")
+                                        .attr("x", (width * 8)-5)
+                                        .attr("y", 45)
+                                        .attr("width", 85)
+                                        .attr("height", 20)
+                                        .attr("style", "fill: #FFFFFF");
+                                
+                                keyG.append("text").text("In Percentage")
+                                    .attr("font-size", "10px")
+                                    .attr("text-anchor", "middle")
+                                    .attr("x", width * 9 + halfWidth)
+                                    .attr("y", 58)
+                                    .attr("style", "fill: #000000");
                             }
 
                             keyG.selectAll('.key-item').data(_data).enter()
@@ -1810,8 +1957,32 @@
                                     })
                                     .on("mouseover", function(datum) {
                                         var svg = opts.svg;
+                                        var operator, comparison_value;
+
+                                        if(datum.value == "< -8"){
+                                            operator = "<";
+                                            value = -8;
+                                        }else if(datum.value == "> +8"){
+                                            operator = ">";
+                                            value = 8;
+                                        }else{
+                                            operator = "=";
+                                            value = parseInt(datum.value);
+                                        }
+
                                         svg.selectAll('.roundSummary').each(function(o) {
-                                            var thisOpacity = ((o.score - o.par) === parseInt(datum.value)) ? 1 : 0.05;
+                                            var thisOpacity;
+                                            switch(operator){
+                                                case "<":
+                                                    thisOpacity = ((o.score - o.par) < value) ? 1 : 0.05;
+                                                    break;
+                                                case ">":
+                                                    thisOpacity = ((o.score - o.par) > value) ? 1 : 0.05;
+                                                    break;
+                                                case "=":
+                                                    thisOpacity = ((o.score - o.par) === parseInt(datum.value)) ? 1 : 0.05;    
+                                                    break;
+                                            }
                                             d3.select(this)
                                                     .attr('fill-opacity', thisOpacity)
                                                     .attr('stroke-opacity', thisOpacity);
@@ -1836,7 +2007,13 @@
                                     .attr("text-anchor", "middle")
                                     .attr("font-weight", "bold")
                                     .attr("font-size", "10px")
-                                    .attr("style", "fill: #FFFFFF");
+                                    .attr("style", function(datum, index){
+                                        if(datum.value >= -3 && datum.value <= 3){
+                                            return "fill: #000000";
+                                        }else{
+                                            return "fill: #FFFFFF";
+                                        }
+                                    });
                         });
             },
             resetSize: function() {
